@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" >
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
+    <!-- <link rel="stylesheet" href="/css/ficheDeProduction.css"> -->
+    <style>/* cyrillic-ext */
+        @import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
+        /* Define page size. Requires print-area adjustment! */
+        body {
+            /* margin:     0;
+            padding:    0;
+            width:      21cm;
+            height:     29.7cm;
+            border: 1px solid; */
+            font-family: 'Roboto Slab';
+        }
+
+        .row{
+            display: -webkit-box;
+        }
+        
+        /* Printable area */
+        #print-area {
+            position:   relative;
+            /* top:        1cm; */
+            /* left:       1cm; */
+            width:      auto;
+            height:     auto;
+        
+            font-size:      12pt;
+        }
+
+        h1{
+            background-color: grey;
+            color: white;
+            font-size: 24pt;
+        }
+        h2{
+            color: black;
+            font-weight: bold;
+            font-size: 14pt;
+            text-transform: uppercase;
+        }
+        .headline{
+            background-color: lightgrey;
+        }
+        
+        .case{
+            position: absolute;
+            top: 2px;
+            left: -21px;
+            height: 5mm;
+            width: 5mm;
+            border: 1px solid black;
+
+        }
+
+        .case-wrapper{
+            display: block;
+            position: relative;
+        }
+
+        .bg-black{
+            background-color: black;
+        }
+
+        .case:before{
+            
+            /* position: absolute;
+            left: -10px; */
+        }
+
+        .case:after {
+        left: 9px;
+        top: 5px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 3px 3px 0;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+        }
+
+        .border-dark{
+            border: 1px solid black;
+        }
+
+        #client > p{
+            line-height:5mm;
+        }
+        .special-ask{
+            height: 100px;
+        }
+
+        .mr-05, .mx-05 {
+            margin-right: .06rem!important;
+        }
+        .ml-05, .mx-05 {
+            margin-left: .06rem!important;
+        }
+        #footer {
+            position: absolute;
+            background-color:red;
+            bottom:0;
+        }
+        /* #header {
+            height:     3cm;
+            width:      100%;
+            background: #ccc;
+        }
+        
+        #footer {
+            bottom:     0;
+            width:      100%;
+            height:     3cm;
+        
+            background: #ccc;
+        } */
+        
+        
+        </style>
+</head>
+<body>
+
+    <div id="print-area">
+        
+        <div class="container-fluid" id="header">
+            <div class="row mt-5">
+                <div class="col-5">
+                    <img class="img-fluid p-2" src="data:image/png;base64,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" alt="Logo">
+                    <!-- <dd class="mb-0 text-capitalize">{{order.name}}</dd>
+                    <dd class="mb-0">{{order.street}}</dd>
+                    <dd class="mb-0">{{order.city}}, {{order.postal}}, {{order.country}}</dd>
+                    <dd class="mb-0">{{order.mail}}</dd>
+                    <dd class="mb-0">{{order.phone}}</dd> -->
+                </div>
+                <div class="col-7 pr-0">
+                    <div class="mt-5">
+                        <h1 class="px-3 text-center">Liste des pièces</h1><br>
+                        <p class="mb-0">Date de commande: {{order.date_create|date("m/d/Y", "Europe/Paris")}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid" id="content">
+            <div class="row">
+                <div class="col-sm-12">
+                    <table id="" class="table table-striped table-bordered dataTable no-footer">
+                        <thead>
+                            <tr role="row">
+                                <th >#</th>
+                                <th >Nom de la pièce</th>
+                                <th>Ref de la pièce</th>
+                                <th>Quantité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for piece in pieces %}   
+                                {% if piece.quantity > 0 %}
+                                    <tr role="row" class="{{ loop.index % 2 == 0 ? 'odd' :'even' }}">
+                                        <td>{{ piece.id|e }}</td>
+                                        <td>{{ piece.name|e }}</td>
+                                        <td>{{ piece.ref }}</td>
+                                        <td class="editable" data-type="text" data-pk="{{ piece.ref }}" data-url="/editQuantityOrder/{{id}}" data-title="Entrer la quantité" data-name="quantity">{{ piece.quantity|e }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="container-fluid" id="footer">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="m-0"><strong>ASBA</strong> 31 rue de Cuire Bât. G 69004 Lyon - 04.78.39.80.30 - 1927@asbadrums.com</p>
+                </div>
+            </div>
+        </div> -->
+    </div>
+<footer>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <!-- <script src="/vendors\datatables.net\js\jquery.dataTables.min.js"></script>
+    <script src="/vendors\datatables.net-bs4\js\dataTables.bootstrap4.min.js"></script>
+    <script src="/js/init-scripts/data-table/datatables-init.js" type="text/javascript"></script> -->
+    <script>
+    jQuery(document).ready(function($) {
+        
+    })
+    </script>
+</footer>
+</body>
+</html>

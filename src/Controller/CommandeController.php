@@ -503,6 +503,8 @@ class CommandeController {
     }
 
     public function orderPdf($request, $response, $args){
+        $type_pdf = $request->getQueryParams()['type_pdf'];
+        
         $orderId = $args['id'];
         $order = \App\Model\Order::leftJoin('clients', 'client_id', '=', 'clients.id')
         ->where('orders.id', $orderId)->first();
@@ -550,9 +552,22 @@ class CommandeController {
             // $this->logger->info('$pieces');
             // $this->logger->info($pieces);
             
-            ob_start();
-            $content = $this->ci->view->fetch('pdf\ficheDeProduction.html', $args);
-            ob_get_clean();
+            switch ($type_pdf) {
+                case 'fdc':
+                    ob_start();
+                    $content = $this->ci->view->fetch('pdf\ficheDeProduction.html', $args);
+                    ob_get_clean();
+                    break;
+                case 'lp':
+                    ob_start();
+                    $content = $this->ci->view->fetch('pdf\listPieces.html', $args);
+                    ob_get_clean();
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
             $pdf = new Pdf;
             $footer = '<!DOCTYPE html>
             <html>  
