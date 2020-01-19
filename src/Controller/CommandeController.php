@@ -391,6 +391,10 @@ class CommandeController {
             }
         }
         
+        foreach ($pieces as $key => $value) {
+                $this->logger->info('key: '.$key.' value: '.$value);
+            }
+
         $args['listAllPieces'] = \App\Model\Piece::all();
         $args['client'] = $client;
         $args['pieces'] = $pieces;
