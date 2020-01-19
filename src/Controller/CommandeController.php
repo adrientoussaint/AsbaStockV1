@@ -392,7 +392,9 @@ class CommandeController {
         }
         
         foreach ($pieces as $key => $value) {
-                $this->logger->info('key: '.$key.' value: '.$value);
+                if(stristr($value->name, "cheur")){
+                    $this->logger->info('key: '.$key.' value: '.$value);
+                }
             }
 
         $args['listAllPieces'] = \App\Model\Piece::all();
