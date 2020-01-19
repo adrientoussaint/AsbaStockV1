@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="form-group">
+            <!-- <form action="/importCSV" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" id="">
+                <button class="btn btn-primary"type="submit" name="import">Go !</button>
+            </form> -->
+            <form action="/createBase" method="post">
+                <select name="type" id="">
+                    <option value="0">Snare</option>
+                    <option value="1">Bass Drum</option>
+                    <option value="2">Floor & Rack Tom</option>
+                </select>
+                <button type="submit">Allez !</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

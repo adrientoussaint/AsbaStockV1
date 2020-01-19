@@ -1,0 +1,177 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="container">
+        <div class="card">
+                <div class="card-header">
+                    <strong class="card-title">Information client</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <dt>Nom du client</dt>
+                            <dd>{{client.name}}</dd>
+                            <dt>Adresse mail</dt>
+                            <dd>{{client.mail}}</dd>
+                        </div>
+                        <div class="col-sm-4">
+                            <dt>Telephone</dt>
+                            <dd>{{client.phone}}</dd>
+                            <dt>Adresse</dt>
+                            <dd>{{client.street}}</dd>
+                            <dd>{{client.postal}} {{client.city}}, {{client.country}}</dd>
+                        </div>
+                        <div class="col-sm-4">
+                            <dt>Actions</dt>
+                            <dd><a href="" data-toggle="modal" data-target="#modalAddPiece">Ajouter une pièce</a></dd>
+                            <dd><a href="/orderPdf/{{id}}" target="_blank">Créer la fiche de commande</a></dd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+                <div class="card-header">
+                    <strong class="card-title">Pièces</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="" class="table table-striped table-bordered dataTable no-footer">
+                                <thead>
+                                    <tr role="row">
+                                        <th >#</th>
+                                        <th >Nom de la pièce</th>
+                                        <th>Ref de la pièce</th>
+                                        <th>Quantité</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for piece in pieces %}   
+                                        {% if piece.quantity > 0 %}
+                                            <tr role="row" class="{{ loop.index % 2 == 0 ? 'odd' :'even' }}">
+                                                <td>{{ piece.id|e }}</td>
+                                                <td>{{ piece.name|e }}</td>
+                                                <td>{{ piece.ref }}</td>
+                                                <td class="editable" data-type="text" data-pk="{{ piece.ref }}" data-url="/editQuantityOrder/{{id}}" data-title="Entrer la quantité" data-name="quantity">{{ piece.quantity|e }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1" role="dialog" id="modalAddPiece">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter une pièce</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="" id="addPiece">
+                        <div class="form-group">
+                            <select class="form-control" name="newPiece" id="newPiece">
+                                <option value="" selected>Sélectionnez une pièce</option>
+                                {% for piece in listAllPieces %}   
+                                    <option value="{{ piece.ref|e }}">{{ piece.name|e }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="quantity" id="quantity" placeholder="Quantité">
+                        </div>
+                            <input type="hidden" name="orderId" id="orderId" value="{{id}}" >
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" id="submitAddPiece" class="btn btn-primary">Ajouter la pièce</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('.editable').editable({
+            success: function(response, newValue){
+                        console.log('response');
+                        console.log(response);
+                        response = JSON.parse(response);
+                        // toaster(response.message, response.status);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1200);
+                    }
+        });
+
+        $("#submitAddPiece").on("click", function(e){
+            var qtySet = verifQty($("#quantity"));
+            var pieceSet = verifPiece($("#newPiece"));
+            if(qtySet && pieceSet){
+                $.ajax({
+                    url : '/addPieceToOrder',
+                    type : 'POST',
+                    data : {ref:$("#newPiece").val(),qty: parseInt($("#quantity").val()), orderId:$("#orderId").val()},
+                    dataType : 'json',
+                    success : function(response){
+                        $('#modalAddPiece').modal('toggle');
+                        toaster(response.message, response.status);
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1200);
+                    },
+ 
+                });
+            }
+        })
+
+        function verifQty(champ){
+            var qty = parseInt(champ.val());
+            if(isNaN(qty)){
+                toaster("Veuillez saisir une quantité valide", true);
+                return false;
+            }else{
+                return true;
+            }
+        }
+        function verifPiece(champ){
+            if(champ.val().length < 1 ){
+                toaster("Veuillez selectionner une pièce", true);
+                return false;
+            }else{
+                return true;
+            }
+        }
+        function toaster(message, error){
+            if(error){
+                $.toast({
+                    heading: 'Erreur',
+                    text: message,
+                    icon: 'error',
+                    loader: false,        // Change it to false to disable loader
+                    loaderBg: 'red'  // To change the background
+                });
+            }else{
+                $.toast({
+                    heading: 'Information',
+                    text: message,
+                    icon: 'info',
+                    loader: false,        // Change it to false to disable loader
+                    loaderBg: '#9EC600'  // To change the background
+                });
+            }
+        }
+    });
+</script>
+{% endblock %}
+

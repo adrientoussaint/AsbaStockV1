@@ -1,0 +1,109 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">Ajouter une pièce</strong>
+                        </div>
+                        <div class="card-body">
+                            <form action="/addPiece" method="post" class="form-horizontal">
+                                <div class="row form-group">
+                                    <div class="col-4">
+                                        <input type="text" name="name" placeholder="Nom de la pièce" class="form-control">
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="text" name="ref" placeholder="Référence" class="form-control">
+                                    </div>
+                                    <div class="col-4">
+                                        <select name="type" class="form-control">
+                                            <option value="null">type</option>                                            
+                                            {% for type in pieceType %}   
+                                                <option value="{{type.id}}">{{ type.name|e }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-2">
+                                        <input type="text" name="quantity" placeholder="Quantité" class="form-control">
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="text" name="price" placeholder="Prix unitaire" class="form-control">
+                                    </div>
+                                    <div class="col-2">
+                                        <input type="text" name="size" placeholder="Diamètre" class="form-control">
+                                    </div>
+                                    <div class="col-6">
+                                        <textarea name="description" rows="3" placeholder="Description" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary btn-sm pull-right" disabled data-toggle="tooltip" data-placement="top" title="En travaux">
+                                            <i class="fa fa-dot-circle-o"></i> Enregistrer
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">Pièces</strong>
+                    </div>
+                    <div class="card-body">
+                        
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="" class="table table-striped table-bordered dataTable no-footer">
+                                    <thead>
+                                        <tr role="row">
+                                            <th >#</th>
+                                            <th >Nom</th>
+                                            <th>Quantité</th>
+                                            <th>Référence</th>
+                                            <th>Prix</th>
+                                            <th>Type</th>
+                                            <th>Fournisseur</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for piece in pieces %}   
+                                        <tr role="row" class="{{ loop.index % 2 == 0 ? 'odd' :'even' }}">
+                                            <td>{{ piece.id|e }}</td>
+                                            <td>{{ piece.name|e }}</td>
+                                            <td class="editable" data-type="text" data-pk="{{ piece.id }}" data-url="/editQuantity" data-title="Entrer la quantité" data-name="quantity">{{ piece.quantity|e }} {{piece.quantity <= 20 ? '<i class="fa fa-exclamation-triangle text-danger"></i>'}}</td>
+                                            <td>{{ piece.ref|e }}</td>
+                                            <td class="editable" data-type="text" data-pk="{{ piece.id }}" data-url="/editPrice" data-title="Entrer le prix" data-name="price">{{ piece.price|e }}€</td>
+                                            <td>{{ piece.type }}</td>
+                                            <td><span data-toggle="tooltip" data-placement="top" title="{{ piece.fournisseur_ref }}">{{ piece.fournisseur_name }}</span></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+    })
+</script>
+{% endblock %}
+
+
+

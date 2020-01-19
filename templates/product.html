@@ -1,0 +1,132 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">Ajouter un fut</strong>
+                        </div>
+                        <div class="card-body">
+                            <form action="/addFut" method="post" class="form-horizontal">
+                                <div class="row form-group">
+                                    <div class="col-4">
+                                            <select name="type" class="form-control">
+                                                <option value="null">type</option>                                            
+                                                {% for type in types %}   
+                                                    <option value="{{type.id}}">{{ type.name|e }}</option>
+                                                {% endfor %}
+                                            </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <select name="gamme" class="form-control">
+                                            <option value="null">gamme</option>                                            
+                                            {% for gamme in gammes %}   
+                                                <option value="{{gamme.id}}">{{ gamme.name|e }} - {{ gamme.finition|e }} </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <select name="size" class="form-control">
+                                            <option value="null">size</option>                                            
+                                            {% for size in sizes %}   
+                                                <option value="{{size.id}}">{{ size.size|e }}"</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary btn-sm pull-right">
+                                            <i class="fa fa-dot-circle-o"></i> Enregistrer
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">Produits</strong>
+                    </div>
+                    <div class="card-body">
+                        
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="bootstrap-data-table" class="table table-striped table-bordered dataTable no-footer" role="grid" aria-describedby="bootstrap-data-table_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th >#</th>
+                                            <th >Type de fut</th>
+                                            <th>Gamme - finition</th>
+                                            <th>Quantité acastillage</th>
+                                            <!-- <th class="sorting" tabindex="0" aria-controls="bootstrap-data-table" rowspan="1" colspan="1" aria-label="activate to sort column ascending">Quantité</th>
+                                            <th class="sorting" tabindex="0" aria-controls="bootstrap-data-table" rowspan="1" colspan="1" aria-label="activate to sort column ascending">Description</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for produit in produits %}   
+                                        <tr role="row" class="{{ loop.index % 2 == 0 ? 'odd' :'even' }}">
+                                            <td>{{ produit.id|e }}</td>
+                                            <td>{{ list['type'][produit.type].name }} {{ list['size'][produit.size].size }}"</td>
+                                            <td>{{ list['gamme'][produit.gamme].name}} - {{ list['gamme'][produit.gamme].finition}}</td>
+                                            <td>{{ list['size'][produit.size].nb_acas }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">Ajouter un produit</strong>
+                    </div>
+                    <div class="card-body">
+                        <form action="/addProduct" method="post" class="form-horizontal">
+                            <div class="row form-group">
+                                <div class="col-3"><input type="text" placeholder="Nom" name="name" class="form-control"></div>
+                                <div class="col-3"><input type="text" placeholder="Référence" name="ref" class="form-control"></div>
+                                <div class="col-3"><input type="text" placeholder="Prix" name="price" class="form-control"></div>
+                                <div class="col-3"><input type="text" placeholder="Quantité" name="quantity" class="form-control"></div>
+                                <div class="col-3">
+                                        <select name="type" class="form-control">
+                                            <option value="null">type</option>                                            
+                                            {% for type in types %}   
+                                                <option value="{{type.id}}">{{ type.name|e }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    <input type="text" placeholder="Type" name="type" class="form-control">
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-12">
+                                    <textarea name="description" rows="3" placeholder="Description" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-sm pull-right">
+                                        <i class="fa fa-dot-circle-o"></i> Enregistrer
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+{% endblock %}
+

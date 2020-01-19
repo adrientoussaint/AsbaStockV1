@@ -1,0 +1,20 @@
+{% extends 'auth/layoutLogin.html' %}
+
+{% block body %}
+<img src="/img/logo.png" alt="Logo" class="mb-5">
+<form class="form-signin" action="{{path_for('auth.signin')}}" method="POST">
+    <!-- <img class="mb-4" src="{{ site.baseurl }}/docs/{{ site.docs_version }}/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72"> -->
+    <h1 class="h3 mb-3 font-weight-normal f-white">Connectez-vous</h1>
+    <p class="f-white">{{signup}} {{error}}</p>
+    <label for="username" class="sr-only">Nom d'utilisateur</label>
+    <input type="text" name="username" id="username" class="form-control" placeholder="Nom d'utilisateur" required autofocus>
+    <label for="password" class="sr-only">Mot de passe</label>
+    <input type="password" name="password" id="password" class="form-control" placeholder="Mot de passe" required>
+    <!-- <div class="checkbox mb-3">
+      <label>
+        <input type="checkbox" value="remember-me"> Remember me
+      </label>
+    </div> -->
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Se connecter</button>
+</form>
+{% endblock %}

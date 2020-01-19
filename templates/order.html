@@ -1,0 +1,264 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">Créer une commande</strong>
+                        </div>
+                        <div class="card-body">
+                            <form action="/addOrder" method="post" id="formOrder">
+                                <div class="row form-group">
+                                    <div class="col-lg-4">
+                                        <div class="card">
+                                            <div class="card-header">Information client</div>
+                                            <div class="card-body card-block">
+                                                <div class="form-group">
+                                                    <label for="client_name" class=" form-control-label">Nom</label>
+                                                    <input type="text" id="client_name" name="client_name" class="form-control">
+                                                </div>
+                                                <div class="row form-group">
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label for="client_mail" class=" form-control-label">Mail</label>
+                                                            <input type="text" id="client_mail" name="client_mail" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="form-group">
+                                                            <label for="client_phone" class=" form-control-label">Téléphone</label>
+                                                            <input type="text" id="client_phone" name="client_phone" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row form-group">
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label for="client_city" class=" form-control-label">Ville</label>
+                                                            <input type="text" id="client_city" name="client_city" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label for="client_postal" class=" form-control-label">Code Postale</label>
+                                                            <input type="text" id="client_postal" name="client_postal" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <label for="client_country" class=" form-control-label">Pays</label>
+                                                            <input type="text" id="client_country" name="client_country" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="client_street" class=" form-control-label">Numéro et rue</label>
+                                                    <input type="text" id="client_street" name="client_street" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="card">
+                                            <div class="card-header">Details commande</div>
+                                            <div class="card-body card-block" id="fut">
+                                                <div class="row form-group indestructible">
+                                                    <div class="col-6">
+                                                        <select id="gamme" name="gamme" class="form-control">
+                                                            <option value="" selected>Gamme</option>
+                                                            {% for gamme in gammes %}   
+                                                                <option value="{{gamme.id}}">{{gamme.name}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <!-- <div class="col-6">
+                                                        <select id="finition" name="finition" class="form-control">
+                                                            <option value="" selected>Finition</option>
+                                                            {% for finition in finitions %}   
+                                                                <option value="{{finition.id}}">{{finition.name}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div> -->
+                                                    <div class="col-6">
+                                                        <input type="text" id="nb_fut" name="nb_fut" placeholder="Nombre de fut" class="form-control d-none">
+                                                        <select name="isSuper" id="isSuper" class="form-control d-none">
+                                                            <option value="null">Est-elle Super ?</option>                                            
+                                                            <option value="1">Oui</option>
+                                                            <option value="0">Non</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary btn-sm pull-right" id="saveOrder">
+                                            <i class="fa fa-dot-circle-o"></i> Enregistrer
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">Pièces</strong>
+                    </div>
+                    <div class="card-body">
+                        
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table id="order_dataTable" class="table table-striped table-bordered dataTable no-footer">
+                                        <thead>
+                                            <tr role="row">
+                                                <th >#</th>
+                                                <th >Nom du client</th>
+                                                <th>Date de création</th>
+                                                <th>Status</th>
+                                                <th>Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for order in orders %}   
+                                            <tr role="row" class="{{ loop.index % 2 == 0 ? 'odd' :'even' }}">
+                                                <td>{{ order.id|e }}</td>
+                                                <td>{{ order.name|e }}</td>
+                                                <td>{{ order.date_create|date("d/m/Y") }}</td>
+                                                {% if order.status != 3 %}
+                                                    <td id="status{{ order.id }}" class="status" data-ref="{{ order.ref }}" data-type="select" data-pk="{{ order.id }}" data-url="/changeOrderStatus" data-current="{{order.status}}" data-title="Changer le statut" data-name="status">{{ status[order.status-1]|e }}</td>
+                                                {% else %}
+                                                    <td class="text-success">Terminée</td>
+                                                {% endif %}
+                                                <td><a href="{{path_for('detail', { 'id': order.id })}}"><i class="fa fa-search"></i></a></td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            var listPossibility = JSON.parse('{{ list | json_encode | raw }}');
+            var listFut = JSON.parse('{{ produits | json_encode | raw }}');
+            var listGamme = listPossibility.gamme;
+            var listSize = listPossibility.size;
+            var listType = listPossibility.type;
+            var listFinition = listPossibility.finition;
+            
+            $("#gamme").on('change', function(){
+                var gamme = parseFloat($(this).val());
+                if(gamme === 2){
+                    $("#isSuper").removeClass("d-none");
+                    if(!$("#nb_fut").hasClass("d-none")){
+                        $("#nb_fut").addClass("d-none");
+                    }
+                }else{
+                    $("#nb_fut").removeClass("d-none");
+                    if(!$("#isSuper").hasClass("d-none")){
+                        $("#isSuper").addClass("d-none");
+                    }
+                }
+            })
+            $('#nb_fut').on('keydown', function(e){
+                if (event.which === 13 || event.keyCode === 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+            $('#nb_fut').on('change', function(e) {
+                var nb_fut = parseFloat($(this).val());
+                var n = 1;
+                if(!isNaN(nb_fut)){
+                    $('#fut>.row:not(.indestructible)').remove();
+                    while (n <= nb_fut) {
+                        $('#fut').append('<div class="row form-group" id="fut'+n+'"><div class="col-6"><label for="fut'+n+'" class=" form-control-label">Fut n°'+n+'</label><select id="type_fut'+n+'" name="type_fut'+n+'" class="form-control type_fut"><option value="default" selected>Type de fut</option></select></div></div>');
+                        $.each(listType, function( index, value ) {
+                            $('#type_fut'+n).append('<option value="'+value.id+'">'+value.name +'</option>');
+                        });
+                        
+
+                        n++;
+                    }
+                }
+            });
+
+            $(document).on('change', ".type_fut", function(e){
+                var id_parent = $(this).attr('id').substr(5, 8);
+                var type = $(this).val();
+                if($(this).val()!='default'){
+                    $('#'+id_parent+'>.size_fut').remove();
+                }
+                $('#'+id_parent).append('<div class="col-3 size_fut"><label for="'+id_parent+'" class=" form-control-label"></label><select id="size_'+id_parent+'" name="size_'+id_parent+'" class="mt-2 form-control"></select></div>');
+                $.each(listSize, function( index, value ) {
+                    if(value.id_type == type){
+                        $('#size_'+id_parent).append('<option value="'+value.id+'">'+value.size +'</option>');
+                    }
+                });
+                
+            })
+
+            $('.status').on("click", function(e){
+                var ref = $(this).data('ref');
+                var id = $(this).data('pk');
+                $(this).editable({
+                    value: parseFloat($(this).data('current')),
+                    source: [
+                        {value: 1, text: 'En attente'},
+                        {value: 2, text: 'En cours'},
+                        {value: 3, text: 'Terminée'}
+                    ],
+                    success: function(response, newValue){
+                        $.toast({
+                            heading: 'Information',
+                            text: response,
+                            icon: 'info',
+                            loader: true,        // Change it to false to disable loader
+                            loaderBg: '#9EC600'  // To change the background
+                        });
+                        if(newValue == 3){
+                            $.ajax({
+                                url : '/updateStock',
+                                type : 'POST',
+                                dataType : 'json',
+                                data: {order_ref:ref,order_id:id},
+                                success : function(response, statut){
+                                    console.log(response);
+                                    // setTimeout(() => {
+                                    //     window.location.reload(false); 
+                                    // }, 500);
+                                },
+
+                                error : function(resultat, statut, erreur){
+                                    
+                                },
+
+                                complete : function(resultat, statut){
+
+                                }
+
+                            });
+                        }
+                    }
+                });
+            })
+        });
+    </script>
+{% endblock %}
+

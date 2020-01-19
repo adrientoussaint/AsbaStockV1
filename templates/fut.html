@@ -1,0 +1,183 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="animated fadeIn">
+        <!-- <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">Ajouter un fut</strong>
+                    </div>
+                    <div class="card-body">
+                        <form action="/addFut" method="post" class="form-horizontal">
+                            <div class="row form-group">
+                                <div class="col-4">
+                                        <select name="type" class="form-control">
+                                            <option value="null">type</option>                                            
+                                            {% for type in types %}   
+                                                <option value="{{type.id}}">{{ type.name|e }}</option>
+                                            {% endfor %}
+                                        </select>
+                                </div>
+                                <div class="col-4">
+                                    <select name="gamme" class="form-control">
+                                        <option value="null">gamme</option>                                            
+                                        {% for gamme in gammes %}   
+                                            <option value="{{gamme.id}}">{{ gamme.name|e }} - {{ gamme.finition|e }} </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <select name="size" class="form-control">
+                                        <option value="null">size</option>                                            
+                                        {% for size in sizes %}   
+                                            <option value="{{size.id}}">{{ size.size|e }}"</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-sm pull-right">
+                                        <i class="fa fa-dot-circle-o"></i> Enregistrer
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">Liste des futs</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="fut_dataTable" class="table table-striped table-bordered dataTable no-footer">
+                                    <thead>
+                                        <tr role="row">
+                                            <th>#</th>
+                                            <th>Quantités S/R/RG</th>
+                                            <th>Taille</th>
+                                            <th>Quantité acastillage</th>
+                                            <th>Longueur tirants Revel/Simone</th>
+                                            <th>Longueur tirants Rive Gauche</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for fut in futs %}   
+                                        <tr role="row" class="{{ loop.index % 2 == 0 ? 'odd' :'even' }}">
+                                            <td>{{ fut.id|e }}</td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-4">
+                                                        {% if fut.quantity_simone >= 0 %}
+                                                            <div class="quantity-fut" data-type="text"  data-pk="{{ fut.id }}" data-url="/fut/editQuantity/quantity_simone" data-title="Entrer la quantité" data-name="quantity_simone">{{ fut.quantity_simone|e }} {{ fut.quantity_simone <= 1 ? '<i class="fa fa-exclamation-triangle text-danger"></i>'}}</div>
+                                                        {% else %}
+                                                            <div>///</div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col-4">
+                                                        {% if fut.quantity_revelation >= 0 %}
+                                                            <div class="quantity-fut" data-type="text" data-pk="{{ fut.id }}" data-url="/fut/editQuantity/quantity_revelation" data-title="Entrer la quantité" data-name="quantity_revelation">{{ fut.quantity_revelation|e }} {{ fut.quantity_revelation <= 1 ? '<i class="fa fa-exclamation-triangle text-danger"></i>'}}</div>
+                                                        {% else %}
+                                                            <div>///</div>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col-4">
+                                                        {% if fut.quantity_rive >= 0 %}
+                                                            <div class="quantity-fut" data-type="text" data-pk="{{ fut.id }}" data-url="/fut/editQuantity/quantity_rive" data-title="Entrer la quantité" data-name="quantity_rive">{{ fut.quantity_rive|e }} {{ fut.quantity_rive <= 1 ? '<i class="fa fa-exclamation-triangle text-danger"></i>'}}</div>
+                                                        {% else %}
+                                                            <div>///</div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{fut.size|e }}</td>
+                                            <td>{{fut.nb_acas|e }}</td>
+                                            <td class="tirantsLength" data-type="select" data-gamme="RS" data-pk="{{ fut.id }}" data-value="{{fut.id_RSTirants}}" data-url="/changeTirantLength/0" data-current="{{tirants[fut.id_RSTirants-1].length}}" data-title="Changer la longueur" data-name="tirantsLength">{{tirants[fut.id_RSTirants-1].length|e }}</td>
+                                            <td class="tirantsLength" data-type="select" data-gamme="RG" data-pk="{{ fut.id }}" data-value="{{fut.id_RGTirants}}" data-url="/changeTirantLength/1" data-current="{{tirants[fut.id_RGTirants-1].length}}" data-title="Changer la longueur" data-name="tirantsLength">{{tirants[fut.id_RGTirants-1].length|e }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+jQuery(document).ready(function($) {
+   
+    var listTirants = JSON.parse('{{ tirants | json_encode | raw }}');
+    listTirants = JSON.parse((JSON.stringify(listTirants).split('"length":').join('"text":')).split('"id":').join('"value":'));
+    $('.quantity-fut').on('click', function(){
+        $(this).editable({
+            mode: 'popup',
+            success: function(response, newValue){
+                $.toast({
+                    heading: 'Information',
+                    text: response,
+                    icon: 'info',
+                    loader: true,        // Change it to false to disable loader
+                    loaderBg: '#9EC600'  // To change the background
+                })
+            }
+        })
+    })
+
+    $('.tirantsLength').on("click", function(e){
+        var gamme = $(this).data('gamme');
+        var fut_id = $(this).data('pk');
+        console.log(listTirants);
+        $(this).editable({
+            value: parseFloat($(this).data('current')),
+            source: listTirants,
+            success: function(response, newValue){
+                $.toast({
+                    heading: 'Information',
+                    text: response,
+                    icon: 'info',
+                    loader: true,        // Change it to false to disable loader
+                    loaderBg: '#9EC600'  // To change the background
+                });
+                // if(newValue == 3){
+                //     $.ajax({
+                //         url : '/updateStock',
+                //         type : 'POST',
+                //         dataType : 'json',
+                //         data: {order_ref:ref,order_id:id},
+                //         success : function(response, statut){
+                //             console.log(response);
+                //             // setTimeout(() => {
+                //             //     window.location.reload(false); 
+                //             // }, 500);
+                //         },
+
+                //         error : function(resultat, statut, erreur){
+                            
+                //         },
+
+                //         complete : function(resultat, statut){
+
+                //         }
+
+                //     });
+                // }
+            }
+        });
+    })
+})
+
+</script>
+
+{% endblock %}
