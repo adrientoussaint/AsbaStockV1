@@ -24,6 +24,7 @@ class CommandeController {
         $fut_gammes = \App\Model\futGamme::all();
         $fut_sizes = \App\Model\listFut::all();
         $fut_finitions = \App\Model\futFinition::all();
+        $listClient = \App\Model\Client::all();
         $list_product = [];
         foreach($fut_sizes as $size){
             $list_product['size'][$size->id] = $size ;
@@ -46,6 +47,7 @@ class CommandeController {
         $args['sizes'] = $fut_sizes;
         $args['finitions'] = $fut_finitions;
         $args['list'] = $list_product;
+        $args['listClient'] = $listClient;
 
         $this->ci->view->render($response, "order.html", $args);
     }
@@ -66,7 +68,7 @@ class CommandeController {
                 $pieces = $this->riveGauche($postData);
                 break;
             case 2:
-                $pieces = $this->revelationSimone(null,$postData['isSuper']);
+                $pieces = $this->revelationSimone($postData,true);
                 break;
             case 3:
                 $pieces = $this->revelationSimone($postData,null);
@@ -77,18 +79,22 @@ class CommandeController {
         
 
         // ::://////////////Création nouveau client///////////////////////////////////
-        $newClient = new \App\Model\Client;
-        $newClient->name = htmlspecialchars($postData['client_name']);
-        $newClient->mail = htmlspecialchars($postData['client_mail']);
-        $newClient->phone = htmlspecialchars($postData['client_phone']);
-        $newClient->city = htmlspecialchars($postData['client_city']);
-        $newClient->postal = htmlspecialchars($postData['client_postal']);
-        $newClient->country = htmlspecialchars($postData['client_country']);
-        $newClient->street = htmlspecialchars($postData['client_street']);
-        $newClient->save();
-
+        if($postData['listClient'] == 'null'){
+            $newClient = new \App\Model\Client;
+            $newClient->name = htmlspecialchars($postData['client_name']);
+            $newClient->mail = htmlspecialchars($postData['client_mail']);
+            $newClient->phone = htmlspecialchars($postData['client_phone']);
+            $newClient->city = htmlspecialchars($postData['client_city']);
+            $newClient->postal = htmlspecialchars($postData['client_postal']);
+            $newClient->country = htmlspecialchars($postData['client_country']);
+            $newClient->street = htmlspecialchars($postData['client_street']);
+            $newClient->save();
+            $client_id = $newClient->id;
+        }else{
+            $client_id = $postData['listClient'];
+        }
         $newOrder = new \App\Model\Order;
-        $newOrder->client_id = $newClient->id;
+        $newOrder->client_id = $client_id;
         $newOrder->piece_list = serialize($pieces);
         $newOrder->order_info = serialize($infos);
 
@@ -123,17 +129,10 @@ class CommandeController {
         while ($i <= $nb_fut) {
             // Récupère dimension fut
             // Récupère type fut
-            if(!is_null($isSuper)){        
-                $ids_futs  = $isSuper ? [7,17,12] : [6,16,12];
-                $fut = \App\Model\listFut::select()
-                ->where('list_futs.id', $ids_futs[$i-1])
-                ->first();
-            }else{
-                $fut = \App\Model\listFut::select()->where([
-                    'list_futs.id_type' => $datas['type_fut'.$i],
-                    'list_futs.id' => $datas['size_fut'.$i],
-                ])->first();
-            }
+            $fut = \App\Model\listFut::select()->where([
+                'list_futs.id_type' => $datas['type_fut'.$i],
+                'list_futs.id' => $datas['size_fut'.$i],
+            ])->first();
 
             $infos['dimensions'][$i] = $fut->size;
             
@@ -147,31 +146,31 @@ class CommandeController {
         return $infos;
     }
 
-    public function revelationSimone($datas, $isSuper){
+    public function revelationSimone($datas, $isSimone){
         $i = 1;
         $pieces = [];
-        $nb_fut = !is_null($isSuper) ? 3 : $datas['nb_fut'];
+        $nb_fut = $datas['nb_fut'];
         $piece["CA"]=1;
         
-        $badge_name = !is_null($isSuper) ? "BS" : "ASB";
+        $badge_name = !is_null($isSimone) ? "BS" : "ASB";
         
         $pieces["E"] = $pieces[$badge_name] = $nb_fut;
 
         while ($i <= $nb_fut) {
-            if(!is_null($isSuper)){        
-                $ids_futs  = $isSuper ? [7,17,12] : [6,16,12];
-                $fut = \App\Model\listFut::select()
-                ->where('list_futs.id', $ids_futs[$i-1])
-                ->first();
-            }else{
+            // if(!is_null($isSimone)){        
+            //     $ids_futs  = $isSimone ? [7,17,12] : [6,16,12];
+            //     $fut = \App\Model\listFut::select()
+            //     ->where('list_futs.id', $ids_futs[$i-1])
+            //     ->first();
+            // }else{
                 $fut = \App\Model\listFut::select()->where([
                     'list_futs.id_type' => $datas['type_fut'.$i],
                     'list_futs.id' => $datas['size_fut'.$i],
                 ])->first();
-            }
+            // }
 
             $tirants = \App\Model\Tirant::select()
-            ->where('tirants.id', $fut->id_RS)
+            ->where('tirants.id', $fut->id_RSTirants)
             ->first();
             
             $pieces["TR".$tirants->length] += $fut->nb_acas*2;
@@ -181,7 +180,7 @@ class CommandeController {
                     $key = "BD";
                     $mensuration = explode("x",$fut->size); //18x14
                     $diam = $mensuration[0]; //18 - diam pour cercle et peau
-                    $cercle = !is_null($isSuper)? "CH" : "CI";
+                    $cercle = !is_null($isSimone)? "CH" : "CI";
                     $pieces["CQB"] += $fut->nb_acas*2;
                     $pieces[$cercle.$diam] += 2;
                     $pieces["SPG"] += 1;
@@ -276,6 +275,12 @@ class CommandeController {
                 'list_futs.id_type' => $datas['type_fut'.$i],
                 'list_futs.id' => $datas['size_fut'.$i],
             ])->first();
+
+            $tirants = \App\Model\Tirant::select()
+            ->where('tirants.id', $fut->id_RGTirants)
+            ->first();
+            
+            $pieces["TR".$tirants->length] += $fut->nb_acas*2;
 
             switch ($datas['type_fut'.$i]) {
                 case 1:
@@ -378,15 +383,28 @@ class CommandeController {
         if($order){
             $orderDetails = $order->join('clients', 'client_id', '=', 'clients.id')->get();
             $list_pieces = unserialize($order->piece_list);
+
             foreach ($list_pieces as $ref => $qty) {
+                $this->logger->info($ref.'=>'.$qty);
+                if(stristr($ref, 'TR')){
+                    $newRef = explode('R', $ref);
+                    $ref = $newRef[1];
+                }
                 array_push($array_ref, $ref);
                 array_push($array_qty, $qty);
             }
             $pieces = \App\Model\Piece::select()->whereIn('ref', $array_ref)->get();
+            $tirants = \App\Model\Tirant::select()->whereIn('length', $array_ref)->get();
             foreach ($pieces as $key => $piece) {
                 $key = array_search($piece->ref, $array_ref);
                 if(!is_null($key)){
                     $piece->quantity = $array_qty[$key];
+                }
+            }
+            foreach ($tirants as $key => $tirant) {
+                $key = array_search($tirant->length, $array_ref);
+                if(!is_null($key)){
+                    $tirant->quantity = $array_qty[$key];
                 }
             }
         }
@@ -400,6 +418,7 @@ class CommandeController {
         $args['listAllPieces'] = \App\Model\Piece::all();
         $args['client'] = $client;
         $args['pieces'] = $pieces;
+        $args['tirants'] = $tirants;
         $args['order'] = $order;
         $this->ci->view->render($response, "orderDetail.html", $args);
     }

@@ -16,6 +16,15 @@
                                             <div class="card-header">Information client</div>
                                             <div class="card-body card-block">
                                                 <div class="form-group">
+                                                    <label for="listClient" class=" form-control-label">Client existant</label>
+                                                    <select type="text" id="listClient" name="listClient" class="form-control">
+                                                        <option value="null" selected>Selectionnez un client</option>
+                                                        {% for client in listClient %}   
+                                                            <option value="{{client.id}}">{{client.name}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
                                                     <label for="client_name" class=" form-control-label">Nom</label>
                                                     <input type="text" id="client_name" name="client_name" class="form-control">
                                                 </div>
@@ -42,7 +51,7 @@
                                                     </div>
                                                     <div class="col-4">
                                                         <div class="form-group">
-                                                            <label for="client_postal" class=" form-control-label">Code Postale</label>
+                                                            <label for="client_postal" class=" form-control-label">Code Postal</label>
                                                             <input type="text" id="client_postal" name="client_postal" class="form-control">
                                                         </div>
                                                     </div>
@@ -82,12 +91,12 @@
                                                         </select>
                                                     </div> -->
                                                     <div class="col-6">
-                                                        <input type="text" id="nb_fut" name="nb_fut" placeholder="Nombre de fut" class="form-control d-none">
-                                                        <select name="isSuper" id="isSuper" class="form-control d-none">
+                                                        <input type="text" id="nb_fut" name="nb_fut" placeholder="Nombre de fut" class="form-control">
+                                                        <!-- <select name="isSuper" id="isSuper" class="form-control d-none">
                                                             <option value="null">Est-elle Super ?</option>                                            
                                                             <option value="1">Oui</option>
                                                             <option value="0">Non</option>
-                                                        </select>
+                                                        </select> -->
                                                     </div>
                                                 </div>
                                             </div>
@@ -161,21 +170,51 @@
             var listSize = listPossibility.size;
             var listType = listPossibility.type;
             var listFinition = listPossibility.finition;
-            
-            $("#gamme").on('change', function(){
-                var gamme = parseFloat($(this).val());
-                if(gamme === 2){
-                    $("#isSuper").removeClass("d-none");
-                    if(!$("#nb_fut").hasClass("d-none")){
-                        $("#nb_fut").addClass("d-none");
-                    }
+            var listClient = JSON.parse('{{ listClient | json_encode | raw }}');
+
+            $('#listClient').on('change', function(){
+                if($(this).val() != 'null'){
+                    var id_client = $(this).val();
+                    $("#client_name").val(listClient[id_client-1].name);
+                    $("#client_name").attr('disabled', true);
+                    $("#client_mail").val(listClient[id_client-1].mail);
+                    $("#client_mail").attr('disabled', true);
+                    $("#client_phone").val(listClient[id_client-1].phone);
+                    $("#client_phone").attr('disabled', true);
+                    $("#client_city").val(listClient[id_client-1].city);
+                    $("#client_city").attr('disabled', true);
+                    $("#client_postal").val(listClient[id_client-1].postal);
+                    $("#client_postal").attr('disabled', true);
+                    $("#client_country").val(listClient[id_client-1].country);
+                    $("#client_country").attr('disabled', true);
+                    $("#client_street").val(listClient[id_client-1].street);
+                    $("#client_street").attr('disabled', true);
                 }else{
-                    $("#nb_fut").removeClass("d-none");
-                    if(!$("#isSuper").hasClass("d-none")){
-                        $("#isSuper").addClass("d-none");
-                    }
+                    $("#client_name").attr('disabled', false);
+                    $("#client_mail").attr('disabled', false);
+                    $("#client_phone").attr('disabled', false);
+                    $("#client_city").attr('disabled', false);
+                    $("#client_postal").attr('disabled', false);
+                    $("#client_country").attr('disabled', false);
+                    $("#client_street").attr('disabled', false);
                 }
             })
+            
+            // $("#gamme").on('change', function(){
+            //     var gamme = parseFloat($(this).val());
+            //     if(gamme === 2){
+            //         $("#isSuper").removeClass("d-none");
+            //         if(!$("#nb_fut").hasClass("d-none")){
+            //             $("#nb_fut").addClass("d-none");
+            //         }
+            //     }else{
+            //         $("#nb_fut").removeClass("d-none");
+            //         if(!$("#isSuper").hasClass("d-none")){
+            //             $("#isSuper").addClass("d-none");
+            //         }
+            //     }
+
+            // })
             $('#nb_fut').on('keydown', function(e){
                 if (event.which === 13 || event.keyCode === 13) {
                     event.preventDefault();

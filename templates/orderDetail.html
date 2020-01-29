@@ -58,6 +58,16 @@
                                             </tr>
                                         {% endif %}
                                     {% endfor %}
+                                    {% for tirant in tirants %}   
+                                        {% if tirant.quantity > 0 %}
+                                            <tr role="row" class="{{ loop.index % 2 == 0 ? 'odd' :'even' }}">
+                                                <td>{{ tirant.id|e }}</td>
+                                                <td>Tirant de {{ tirant.length|e }}</td>
+                                                <td>TR{{ tirant.length }}</td>
+                                                <td class="editable" data-type="text" data-pk="TR{{ tirant.length }}" data-url="/editQuantityOrder/{{id}}" data-title="Entrer la quantité" data-name="quantity">{{ tirant.quantity|e }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
