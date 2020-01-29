@@ -13,9 +13,10 @@ class FournisseurController {
 
     public function fournisseur($request, $response, $args) {
         $fournisseurs = \App\Model\Fournisseur::all();
-        $pieces = \App\Model\Piece::select()->where('id_fournisseur', null)->get();
+        $pieces = \App\Model\Piece::all();
         
         $args['fournisseurs'] = $fournisseurs;
+        // Afficher la liste des pièces pour chaque fournisseur dans table
         $args['pieces'] = $pieces;
         
         $this->ci->view->render($response, "fournisseur.html", $args);
@@ -29,7 +30,7 @@ class FournisseurController {
         $mail = $postData['mail'];
         $phone = $postData['phone'];
         $commentaire = $postData['commentaire'];
-        $piecesFourni = $postData['pieceFourni'];
+        // $piecesFourni = $postData['pieceFourni'];
 
         $new->name = $name;
         $new->ref = $ref;
@@ -39,11 +40,11 @@ class FournisseurController {
         $new->save();
         
 
-        foreach ($piecesFourni as $id) {
-            $piece = \App\Model\Piece::select()->where('id', $id)->first();
-            $piece->id_fournisseur = $new->id;
-            $piece->save();
-        }
+        // foreach ($piecesFourni as $id) {
+        //     $piece = \App\Model\Piece::select()->where('id', $id)->first();
+        //     $piece->id_fournisseur = $new->id;
+        //     $piece->save();
+        // }
         return $response->withRedirect($this->ci->router->pathFor('fournisseur'));
     
     }

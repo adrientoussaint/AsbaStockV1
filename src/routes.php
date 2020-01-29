@@ -34,6 +34,7 @@ $app->group('', function(){
     $this->post('/addFut', '\App\Controller\PieceController:addFut');
     $this->post('/editQuantity', '\App\Controller\PieceController:editQuantity');
     $this->post('/editPrice', '\App\Controller\PieceController:editPrice');
+    $this->post('/editFournisseur', '\App\Controller\PieceController:editFournisseur');
 
 
     // FOURNISSEURS

@@ -18,9 +18,11 @@ class PieceController {
         ->select('pieces.*', 'fournisseurs.name as fournisseur_name', 'fournisseurs.ref as fournisseur_ref', "piece_types.name as type")
         ->get();
         $piece_types = \App\Model\pieceType::all();
+        $fournisseurs = \App\Model\Fournisseur::all();
 
         $args['pieces'] = $pieces;
         $args['pieceType'] = $piece_types;
+        $args['fournisseurs'] = $fournisseurs;
         $this->ci->view->render($response, "piece.html", $args);
     }
 
@@ -72,6 +74,20 @@ class PieceController {
             echo "Le prix de ".$piece->name." a bien été mise à jour. ";
         }else{
             echo "Erreur dans le changement du prix.";
+        }
+    }
+
+    public function editFournisseur($request, $response, $args) {
+        $postData = $request->getParsedBody();
+        $id = htmlspecialchars($postData['pk']);
+        $value = htmlspecialchars($postData['value']);
+        $piece = \App\Model\Piece::select()->where('id', $id)->first();
+        $piece->id_fournisseur = $value;
+
+        if($piece->save()){
+            echo "Le fournisseur de ".$piece->name." a bien été mise à jour. ";
+        }else{
+            echo "Erreur dans le changement de fournisseur.";
         }
     }
 
