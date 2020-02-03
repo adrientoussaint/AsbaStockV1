@@ -15,12 +15,44 @@ class PieceController {
     public function piece($request, $response, $args) {
         $pieces = \App\Model\Piece::leftJoin('fournisseurs', 'id_fournisseur', '=', 'fournisseurs.id')
         ->leftJoin('piece_types', 'pieces.type', '=', 'piece_types.id')
-        ->select('pieces.*', 'fournisseurs.name as fournisseur_name', 'fournisseurs.ref as fournisseur_ref', "piece_types.name as type")
+        ->select('pieces.*', 'fournisseurs.name as fournisseur_name', 'fournisseurs.ref as fournisseur_ref', "piece_types.name as type", "piece_types.alert as alert")
         ->get();
         $piece_types = \App\Model\pieceType::all();
         $fournisseurs = \App\Model\Fournisseur::all();
+        $tirants = \App\Model\Tirant::leftJoin('fournisseurs', 'id_fournisseur', '=', 'fournisseurs.id')
+        ->leftJoin('piece_types', 'tirants.type', '=', 'piece_types.id')
+        ->select('tirants.*', 'fournisseurs.name as fournisseur_name', 'fournisseurs.ref as fournisseur_ref', "piece_types.name as type", "piece_types.alert as alert")
+        ->get();
 
+        // // $list_pieces = (object)array_merge((array)$pieces,(array)$tirants);
+        // $pieceLength = sizeof($pieces);
+        // $this->logger->info(gettype($pieces));
+        // $arrayobj = new ArrayObject($pieces);
+        // foreach ($tirants as $key => $value) {
+        //     # code...
+        //     $this->logger->info($key);
+        //     $this->logger->info($value);
+        //     $id = $pieceLength+$key;
+        //     // $this->logger->info($pieceLength);
+        //     // $this->logger->info($id);
+        //     $arrayobj->append($value);
+        //     // $piece[$id]->name = "Tirant de ".$value->length;
+
+            
+        //     // array_push($pieces, $value);
+        //     // foreach ($value as $k => $v) {
+        //     //     # code...
+        //     //     $this->logger->info($k);
+        //     //     $this->logger->info($v);
+        //     // }
+        // }
+        // foreach ($arrayobj as $k => $v) {
+        //         # code...
+        //         $this->logger->info($k);
+        //         $this->logger->info($v);
+        //     }
         $args['pieces'] = $pieces;
+        $args['tirants'] = $tirants;
         $args['pieceType'] = $piece_types;
         $args['fournisseurs'] = $fournisseurs;
         $this->ci->view->render($response, "piece.html", $args);
@@ -50,9 +82,14 @@ class PieceController {
 
     public function editQuantity($request, $response, $args) {
         $postData = $request->getParsedBody();
+        $isTirant = $args['isTirant'];
         $id = htmlspecialchars($postData['pk']);
         $value = htmlspecialchars($postData['value']);
-        $piece = \App\Model\Piece::select()->where('id', $id)->first();
+        if($isTirant){
+            $piece = \App\Model\Tirant::select()->where('id', $id)->first();
+        }else{
+            $piece = \App\Model\Piece::select()->where('id', $id)->first();
+        }
         $piece->quantity = $value;
 
         if($piece->save()){
@@ -64,9 +101,14 @@ class PieceController {
 
     public function editPrice($request, $response, $args) {
         $postData = $request->getParsedBody();
+        $isTirant = $args['isTirant'];
         $id = htmlspecialchars($postData['pk']);
         $value = htmlspecialchars($postData['value']);
-        $piece = \App\Model\Piece::select()->where('id', $id)->first();
+        if($isTirant){
+            $piece = \App\Model\Tirant::select()->where('id', $id)->first();
+        }else{
+            $piece = \App\Model\Piece::select()->where('id', $id)->first();
+        }
         $formatedVal = floatval($value);
         $piece->price = $formatedVal;
 
@@ -79,9 +121,14 @@ class PieceController {
 
     public function editFournisseur($request, $response, $args) {
         $postData = $request->getParsedBody();
+        $isTirant = $args['isTirant'];
         $id = htmlspecialchars($postData['pk']);
         $value = htmlspecialchars($postData['value']);
-        $piece = \App\Model\Piece::select()->where('id', $id)->first();
+        if($isTirant){
+            $piece = \App\Model\Tirant::select()->where('id', $id)->first();
+        }else{
+            $piece = \App\Model\Piece::select()->where('id', $id)->first();
+        }
         $piece->id_fournisseur = $value;
 
         if($piece->save()){

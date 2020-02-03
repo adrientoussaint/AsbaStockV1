@@ -32,9 +32,9 @@ $app->group('', function(){
     $this->get('/piece', '\App\Controller\PieceController:piece')->setName('piece');
     $this->post('/addPiece', '\App\Controller\PieceController:addPiece');
     $this->post('/addFut', '\App\Controller\PieceController:addFut');
-    $this->post('/editQuantity', '\App\Controller\PieceController:editQuantity');
-    $this->post('/editPrice', '\App\Controller\PieceController:editPrice');
-    $this->post('/editFournisseur', '\App\Controller\PieceController:editFournisseur');
+    $this->post('/editQuantity/{isTirant}', '\App\Controller\PieceController:editQuantity');
+    $this->post('/editPrice/{isTirant}', '\App\Controller\PieceController:editPrice');
+    $this->post('/editFournisseur/{isTirant}', '\App\Controller\PieceController:editFournisseur');
 
 
     // FOURNISSEURS

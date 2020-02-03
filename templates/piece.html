@@ -79,12 +79,23 @@
                                         <tr role="row" class="{{ loop.index % 2 == 0 ? 'odd' :'even' }}">
                                             <td>{{ piece.id|e }}</td>
                                             <td>{{ piece.name|e }}</td>
-                                            <td class="editable" data-type="text" data-pk="{{ piece.id }}" data-url="/editQuantity" data-title="Entrer la quantité" data-name="quantity">{{ piece.quantity|e }} {{piece.quantity <= 20 ? '<i class="fa fa-exclamation-triangle text-danger"></i>'}}</td>
+                                            <td class="editable" data-type="text" data-pk="{{ piece.id }}" data-url="/editQuantity/0" data-title="Entrer la quantité" data-name="quantity">{{ piece.quantity|e }} {{piece.quantity <= piece.alert ? '<i class="fa fa-exclamation-triangle text-danger"></i>'}}</td>
                                             <td>{{ piece.ref|e }}</td>
-                                            <td class="editable" data-type="text" data-pk="{{ piece.id }}" data-url="/editPrice" data-title="Entrer le prix" data-name="price">{{ piece.price|e }}€</td>
+                                            <td class="editable" data-type="text" data-pk="{{ piece.id }}" data-url="/editPrice/0" data-title="Entrer le prix" data-name="price">{{ piece.price|e }}€</td>
                                             <td>{{ piece.type }}</td>
-                                            <!-- <td><span data-toggle="tooltip" data-placement="top" title="{{ piece.fournisseur_ref }}">{{ piece.fournisseur_name }}</span></td> -->
-                                            <td id="status{{ piece.id }}" class="status" data-ref="{{ piece.ref }}" data-type="select" data-pk="{{ piece.id }}" data-url="/editFournisseur" data-current="{{piece.id_fournisseur}}" data-title="Changer le fournisseur" data-name="fournisseur">{{ piece.fournisseur_name|e }}</td>
+                                            <td id="status{{ piece.id }}" class="status" data-ref="{{ piece.ref }}" data-type="select" data-pk="{{ piece.id }}" data-url="/editFournisseur/0" data-current="{{piece.id_fournisseur}}" data-title="Changer le fournisseur" data-name="fournisseur">{{ piece.fournisseur_name|e }}</td>
+
+                                        </tr>
+                                        {% endfor %}
+                                        {% for tirant in tirants %}   
+                                        <tr role="row" class="{{ loop.index % 2 == 0 ? 'odd' :'even' }}">
+                                            <td>{{ tirant.id|e }}</td>
+                                            <td>Tirant de {{ tirant.length|e }}</td>
+                                            <td class="editable" data-type="text" data-pk="{{ tirant.id }}" data-url="/editQuantity/1" data-title="Entrer la quantité" data-name="quantity">{{ tirant.quantity|e }} {{tirant.quantity <= piece.alert ? '<i class="fa fa-exclamation-triangle text-danger"></i>'}}</td>
+                                            <td>TR{{ tirant.length|e }}</td>
+                                            <td class="editable" data-type="text" data-pk="{{ tirant.id }}" data-url="/editPrice/1" data-title="Entrer le prix" data-name="price">{{ tirant.price|e }}€</td>
+                                            <td>{{ tirant.type }}</td>
+                                            <td id="status{{ tirant.id }}" class="status" data-ref="{{ tirant.ref }}" data-type="select" data-pk="{{ tirant.id }}" data-url="/editFournisseur/1" data-current="{{tirant.id_fournisseur}}" data-title="Changer le fournisseur" data-name="fournisseur">{{ tirant.fournisseur_name|e }}</td>
 
                                         </tr>
                                         {% endfor %}
