@@ -139,7 +139,7 @@
                 <div class="col-7 pr-0">
                     <div class="mt-5">
                         <h1 class="px-3 text-center">FICHE DE COMMANDE</h1><br>
-                        <p class="mb-0">Date de commande: {{order.date_create|date("m/d/Y", "Europe/Paris")}}</p>
+                        <p class="mb-0">Date de commande: {{order.date_create|date("d/m/Y", "Europe/Paris")}}</p>
                     </div>
                 </div>
             </div>
@@ -199,7 +199,7 @@
                 <div class="col-12 border-dark mt-2">
                     <div class="row special-ask">
                         <div class="col-12">
-                            Demandes spécifiques:
+                            Demandes spécifiques: <br> {{order.comment}}
                         </div>
                     </div>
                 </div>

@@ -93,8 +93,11 @@ class CommandeController {
         }else{
             $client_id = $postData['listClient'];
         }
+
+
         $newOrder = new \App\Model\Order;
         $newOrder->client_id = $client_id;
+        $newOrder->comment = htmlspecialchars($postData['order_comment']);
         $newOrder->piece_list = serialize($pieces);
         $newOrder->order_info = serialize($infos);
 
@@ -123,7 +126,7 @@ class CommandeController {
         ->first();
         $infos['gamme'] = $gamme->name;
 
-        $nb_fut = !is_null($datas['nb_fut']) ? 3 : $datas['nb_fut'];
+        $nb_fut = $datas['nb_fut'];
         $infos['dimensions'] = [];
         $infos['types'] = [];
         while ($i <= $nb_fut) {
