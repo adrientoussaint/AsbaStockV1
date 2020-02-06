@@ -11,25 +11,24 @@ class HomeController {
     }
 
     public function home($request, $response, $args) {
+        $tickets = \App\Model\Ticket::all();
+        $args['tickets'] = $tickets;
         $this->ci->view->render($response, "home.html", $args);
     }
 
-    public function newsletterSubscribed($request, $response, $args) {
-        $pattern =  '/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/';
+    public function addTicket($request, $response, $args) {
+        $new = new \App\Model\Ticket;
         $postData = $request->getParsedBody();
-        $email = htmlspecialchars($postData['email']);
-        $existingmail = \App\Model\Newsletter::select()->where('email', $email)->get();
-       if(preg_match($pattern, $email)){
-           if(count($existingmail) > 0){
-                echo "Vous êtes déjà inscrit à notre newsletter";
-           }else{
-               $new = new \App\Model\Newsletter;
-               $new->email = $email;
-               $new->save();
-               echo "Vous recevrez notre newsletter !";
-           }
-       }else{
-            echo "Erreur - Email incorrect";
-       }    
+       
+        $name = $postData['name'];
+        $type = $postData['type'];   
+        $description = $postData['description'];
+        
+        $new->name = $name;
+        $new->type = $type;
+        $new->description = $description;
+        
+        $new->save();
+        return $response->withStatus(302)->withHeader('Location', '/');
     }
 }

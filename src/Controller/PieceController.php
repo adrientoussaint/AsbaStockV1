@@ -13,6 +13,9 @@ class PieceController {
     }
 
     public function piece($request, $response, $args) {
+        $raw = file_get_contents('https://api.exchangeratesapi.io/latest?symbols=USD');
+        $change_rate = json_decode($raw);
+
         $pieces = \App\Model\Piece::leftJoin('fournisseurs', 'id_fournisseur', '=', 'fournisseurs.id')
         ->leftJoin('piece_types', 'pieces.type', '=', 'piece_types.id')
         ->select('pieces.*', 'fournisseurs.name as fournisseur_name', 'fournisseurs.ref as fournisseur_ref', "piece_types.name as type", "piece_types.alert as alert")
@@ -51,6 +54,7 @@ class PieceController {
         //         $this->logger->info($k);
         //         $this->logger->info($v);
         //     }
+        $args['change_rate_USD'] = $change_rate->rates->USD;
         $args['pieces'] = $pieces;
         $args['tirants'] = $tirants;
         $args['pieceType'] = $piece_types;
@@ -104,12 +108,18 @@ class PieceController {
         $isTirant = $args['isTirant'];
         $id = htmlspecialchars($postData['pk']);
         $value = htmlspecialchars($postData['value']);
+        $raw = file_get_contents('https://api.exchangeratesapi.io/latest?symbols=USD');
+        $change_rate = json_decode($raw);
+        $formatedVal = floatval($value);
+        if(stristr($value,'$')){
+            $formatedVal = $formatedVal/$change_rate->rates->USD;
+        }
         if($isTirant){
             $piece = \App\Model\Tirant::select()->where('id', $id)->first();
         }else{
             $piece = \App\Model\Piece::select()->where('id', $id)->first();
         }
-        $formatedVal = floatval($value);
+        
         $piece->price = $formatedVal;
 
         if($piece->save()){

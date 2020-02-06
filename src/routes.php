@@ -6,7 +6,9 @@ $app->get('/auth/signin', 'AuthController:getSignIn')->setName('auth.signin');
 $app->post('/auth/signin', 'AuthController:postSignIn');
 
 $app->group('', function(){
+    //HOME
     $this->get('/', '\App\Controller\HomeController:home')->setName("home");
+    $this->post('/addTicket', '\App\Controller\HomeController:addTicket');
     
     
     // $this->get('/product', '\App\Controller\StockController:product');
