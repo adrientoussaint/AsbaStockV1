@@ -171,7 +171,6 @@
     <script type="text/javascript">
         jQuery(document).ready(function($) {
             var listPossibility = JSON.parse('{{ list | json_encode | raw }}');
-            var listFut = JSON.parse('{{ produits | json_encode | raw }}');
             var listGamme = listPossibility.gamme;
             var listSize = listPossibility.size;
             var listType = listPossibility.type;

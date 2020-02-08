@@ -148,17 +148,23 @@ class PieceController {
         }
     }
 
-    public function addFut($request, $response, $args) {
-        $new = new \App\Model\Fut;
+    public function editComment($request, $response, $args) {
         $postData = $request->getParsedBody();
-        $type = $postData['type'];
-        $gamme = $postData['gamme'];
-        $size = $postData['size'];
-        $new->type = $type;
-        $new->size = $size;
-        $new->gamme = $gamme;
-        
-        $new->save();
-        return $response->withStatus(302)->withHeader('Location', '/product');
+        $isTirant = $args['isTirant'];
+        $id = htmlspecialchars($postData['pk']);
+        $value = htmlspecialchars($postData['value']);
+        if($isTirant){
+            $piece = \App\Model\Tirant::select()->where('id', $id)->first();
+        }else{
+            $piece = \App\Model\Piece::select()->where('id', $id)->first();
+        }
+        $piece->comment = $value;
+
+        if($piece->save()){
+            echo "Le commentaire de ".$piece->name." a bien été mise à jour. ";
+        }else{
+            echo "Erreur dans le changement de commentaire.";
+        }
     }
+
 }

@@ -19,7 +19,6 @@ class CommandeController {
         $orders = \App\Model\Order::join('clients', 'client_id', '=', 'clients.id')
         ->select('orders.id', 'clients.name', 'orders.date_create', 'orders.status', 'orders.ref')
         ->get();
-        $futs = \App\Model\Fut::all();
         $fut_types = \App\Model\futType::all();
         $fut_gammes = \App\Model\futGamme::all();
         $fut_sizes = \App\Model\listFut::all();
@@ -41,7 +40,6 @@ class CommandeController {
 
         $args['orders'] = $orders;
         $args['status'] = ["En attente", "En cours", "Terminée"];
-        $args['produits'] = $futs;
         $args['types'] = $fut_types;
         $args['gammes'] = $fut_gammes;
         $args['sizes'] = $fut_sizes;

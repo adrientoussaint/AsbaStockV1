@@ -37,6 +37,7 @@ $app->group('', function(){
     $this->post('/editQuantity/{isTirant}', '\App\Controller\PieceController:editQuantity');
     $this->post('/editPrice/{isTirant}', '\App\Controller\PieceController:editPrice');
     $this->post('/editFournisseur/{isTirant}', '\App\Controller\PieceController:editFournisseur');
+    $this->post('/editComment/{isTirant}', '\App\Controller\PieceController:editComment');
 
 
     // FOURNISSEURS
@@ -52,8 +53,8 @@ $app->group('', function(){
     
     // DEV
     // $this->post('/importCSV', '\App\Controller\StockController:importCSV');
-    $this->get('/data', '\App\Controller\StockController:data');
-    $this->post('/createBase', '\App\Controller\StockController:createBase');
+    // $this->get('/data', '\App\Controller\StockController:data');
+    // $this->post('/createBase', '\App\Controller\StockController:createBase');
  
 
 })->add(new App\Middleware\AuthMiddleware($container));
