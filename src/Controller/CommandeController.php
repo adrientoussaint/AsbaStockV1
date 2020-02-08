@@ -525,6 +525,61 @@ class CommandeController {
                 }
             }
         }
+        
+        foreach ($list_pieces as $ref => $qty) {
+            if(stristr($ref, 'TR')){
+                $tirantLength = substr($ref, 2);
+                $tirant = \App\Model\Tirant::select()->where('length', $tirantLength)->first();
+                $tirant->quantity -= $qty;
+                $tirant->save();
+            }
+        }
+
+        $order_info = unserialize($order->order_info);
+        $gamme = null;
+        foreach ($order_info as $key => $value) {
+            if($key == "gamme"){
+                $gamme = $value;
+            }
+            if($key == "dimensions"){
+                foreach($value as $k => $size){
+                    $type = $order_info["types"][$k];
+                    switch($type){
+                        case "Grosse caisse":
+                            $id_type = 1;
+                        break;
+                        case "Caisse claire":
+                            $id_type = 2;
+                        break;
+                        case "Floor tom":
+                            $id_type = 3;
+                        break;
+                        case "Rack tom":
+                            $id_type = 4;
+                        break;
+                    }
+
+                    $fut = \App\Model\listFut::select()->where([
+                        'size' => $size,
+                        'id_type' => $id_type
+                    ])->first();
+
+                    switch($gamme){
+                        case "Simone":
+                            $fut->quantity_simone -= 1;
+                        break;
+                        case "Revelation":
+                            $fut->quantity_revelation -= 1;
+                        break;
+                        case "Rive gauche":
+                            $fut->quantity_rive -= 1;
+                        break;
+                    }
+                    $fut->save();
+                }
+            }
+        }
+
             
     }
 
