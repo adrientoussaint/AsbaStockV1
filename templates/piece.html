@@ -72,6 +72,7 @@
                                             <th>Prix</th>
                                             <th>Type</th>
                                             <th>Fournisseur</th>
+                                            <th>Réf Fo.</th>
                                             <th>Commentaire</th>
                                         </tr>
                                     </thead>
@@ -85,6 +86,7 @@
                                             <td class="editable" data-type="text" data-pk="{{ piece.id }}" data-url="/editPrice/0" data-title="Entrer le prix" data-name="price"><span data-toggle="tooltip" data-placement="top" title="{{ (piece.price*change_rate_USD)|number_format(2, '.', ',') }}$">{{ piece.price|number_format(2, '.', ',')}}€</span></td>
                                             <td>{{ piece.type }}</td>
                                             <td class="fournisseur" data-ref="{{ piece.ref }}" data-type="select" data-pk="{{ piece.id }}" data-url="/editFournisseur/0" data-current="{{piece.id_fournisseur}}" data-title="Changer le fournisseur" data-name="fournisseur">{{ piece.fournisseur_name|e }}</td>
+                                            <td>{{ piece.fournisseur_ref }}</td>
                                             <td class="fournisseur" data-ref="{{ piece.ref }}" data-type="text" data-pk="{{ piece.id }}" data-url="/editComment/0" data-current="{{piece.comment}}" data-title="Commentaire" data-name="commentaire">{{ piece.comment|e }}</td>
 
                                         </tr>
@@ -98,6 +100,7 @@
                                             <td class="editable" data-type="text" data-pk="{{ tirant.id }}" data-url="/editPrice/1" data-title="Entrer le prix" data-name="price"><span data-toggle="tooltip" data-placement="top" title="{{ (tirant.price*change_rate_USD)|number_format(2, '.', ',') }}$">{{ tirant.price|number_format(2, '.', ',')}}€</span></td>
                                             <td>{{ tirant.type }}</td>
                                             <td class="fournisseur" data-ref="{{ tirant.ref }}" data-type="select" data-pk="{{ tirant.id }}" data-url="/editFournisseur/1" data-current="{{tirant.id_fournisseur}}" data-title="Changer le fournisseur" data-name="fournisseur">{{ tirant.fournisseur_name|e }}</td>
+                                            <td>{{ tirant.fournisseur_ref }}</td>
                                             <td class="fournisseur" data-ref="{{ tirant.ref }}" data-type="text" data-pk="{{ tirant.id }}" data-url="/editComment/1" data-current="{{tirant.comment}}" data-title="Commentaire" data-name="commentaire">{{ tirant.comment|e }}</td>
 
                                         </tr>

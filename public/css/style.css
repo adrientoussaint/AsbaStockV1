@@ -2475,3 +2475,7 @@ header .form-inline {
 .fs-1{
   font-size: 1rem !important;
 }
+
+.bg-success {
+  background-color: #40bd5c54 !important;
+}

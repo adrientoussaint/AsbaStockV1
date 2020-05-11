@@ -31,4 +31,16 @@ class HomeController {
         $new->save();
         return $response->withStatus(302)->withHeader('Location', '/');
     }
+    public function changeTicketStatus($request, $response, $args) {
+        $postData = $request->getParsedBody();
+        $ticket_id = htmlspecialchars($postData['ticket_id']);
+        $ticket = \App\Model\Ticket::select()->where('id', $ticket_id)->first();
+        $ticket->status = !$ticket->status;
+        
+        if($ticket->save()){
+            echo "Le statut du ticket a été mis à jour";
+        }else{
+            echo "Erreur dans le changement de statut.";
+        }
+    }
 }

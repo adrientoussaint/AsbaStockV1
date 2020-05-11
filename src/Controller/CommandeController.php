@@ -210,13 +210,15 @@ class CommandeController {
                     $mensuration = explode("x",$fut->size); //18x14
                     $diam = $mensuration[0]; //18 - diam pour cercle et peau
                     $prof = $mensuration[1]; //14 - prof pour tirants
+                    $cercle = !is_null($isSimone)? "CES" : "CMS";
+                    $id_declencheur = !is_null($isSimone)? 2 : 1;
 
                     $pieces["CQS"] += $fut->nb_acas;
-                    $pieces["DCL"] += 1;
+                    $pieces["DCL".$id_declencheur] += 1;
                     $pieces["CP"] += 1;
                     $pieces["T".$diam] += 1;
-                    $pieces["CMS".$diam] += 1;
-                    $pieces["CMSD".$diam] += 1;
+                    $pieces[$cercle.$diam] += 1;
+                    $pieces[$cercle."D".$diam] += 1;
                     $pieces["P".$key."G"] += 1;
                     $pieces["PF".$key.$diam] += 1;
                     $pieces["PR".$key.$diam] += 1;
@@ -228,8 +230,9 @@ class CommandeController {
                     $mensuration = explode("x",$fut->size); //18x14
                     $diam = $mensuration[0]; //18 - diam pour cercle et peau
                     $prof = $mensuration[1]; //14 - prof pour tirants
+                    $cercle = !is_null($isSimone)? "CE" : "CM";
                     $pieces["CQT"] += $fut->nb_acas*2;
-                    $pieces["CM".$diam] += 2;
+                    $pieces[$cercle.$diam] += 2;
                     $pieces["SPG"] += 2;
                     $pieces["SPD"] += 1;
                     $pieces["P".$key] += 3;
@@ -242,8 +245,9 @@ class CommandeController {
                     $mensuration = explode("x",$fut->size); //18x14
                     $diam = $mensuration[0]; //18 - diam pour cercle et peau
                     $prof = $mensuration[1]; //14 - prof pour tirants
+                    $cercle = !is_null($isSimone)? "CE" : "CM";
                     $pieces["CQT"] += $fut->nb_acas*2;
-                    $pieces["CM".$diam] += 2;
+                    $pieces[$cercle.$diam] += 2;
                     $pieces["PF".$diam] += 1;
                     $pieces["PR".$diam] += 1;
                     break;
@@ -315,7 +319,7 @@ class CommandeController {
                     $prof = $mensuration[1]; //14 - prof pour tirants
 
                     $pieces["CQS"] += $fut->nb_acas;
-                    $pieces["DCL"] += 1;
+                    $pieces["DCL1"] += 1;
                     $pieces["CP"] += 1;
                     $pieces["T".$diam] += 1;
                     $pieces["CES".$diam] += 1;

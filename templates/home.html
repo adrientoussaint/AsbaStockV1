@@ -46,15 +46,17 @@
                             <th>Titre</th>
                             <th>Description</th>
                             <th>Type</th>
+                            <th>Statut</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for ticket in tickets %}   
-                        <tr role="row">
+                        <tr role="row" class="{{ticket.status ? 'bg-success' : ''}}">
                             <td>{{ticket.id}}</td>
                             <td>{{ticket.name}}</td>
                             <td>{{ticket.description}}</td>
                             <td>{{ticket.type ? 'idée' : 'bug'}}</td>
+                            <td data-id="{{ticket.id}}" class="ticket-status">{{ticket.status ? 'Traité' : 'En attente'}}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -65,5 +67,22 @@
 </div>
 {% endblock %}
 {% block javascripts %}
+<script>
+    jQuery(document).ready(function($) {
 
+        $('.ticket-status').on("click", function(e){
+            var ticket_id = $(this).data('id');
+            $.ajax({
+                    url : '/changeTicketStatus',
+                    type : 'POST',
+                    dataType : 'json',
+                    data: {ticket_id},
+                    complete: function (response, statut){
+                            window.location.reload();
+                    }
+ 
+            });
+        })
+    })
+</script>
 {% endblock %}
