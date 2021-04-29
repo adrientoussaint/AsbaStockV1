@@ -18,7 +18,7 @@
         "php": ">=7.0.0",
         "slim/slim": "3.8.1",
         "slim/twig-view": "^2.0",
-        "illuminate/database": "~5.1",
+        "illuminate/database": "~6.20",
         "monolog/monolog": "^1.24",
         "mikehaertl/phpwkhtmltopdf": "^2.4",
         "robmorgan/phinx":"0.5.*"
